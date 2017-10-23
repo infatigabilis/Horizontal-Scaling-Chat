@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis">
+
+    <select id="channel_get" resultType="Channel" parameterType="long" resultMap="channel">
+        SELECT
+          c.id as c_id,
+          c.name as c_name,
+          u.id as u_id,
+          u.source_id as u_source_id,
+          u.auth_source as u_auth_source,
+          u.login as u_login,
+          u.token as u_token
+        FROM channels c
+        LEFT JOIN user_channel uc ON c.id=uc.channel_id
+        LEFT JOIN users u ON u.id=uc.user_id
+          WHERE c.id=#{1}
+    </select>
+
+    <select id="channel_get_all" resultType="Channel">
+        SELECT id FROM channels;
+    </select>
+
+    <insert id="channel_create" parameterType="Channel">
+        INSERT INTO channels (id, name) VALUES (#{id}, #{name})
+    </insert>
+
+    <insert id="channel_add_member" parameterType="map">
+        INSERT INTO user_channel (user_id, channel_id) VALUES (#{user.id}, #{channel_id})
+    </insert>
+
+    <delete id="channel_expel_member" parameterType="map">
+        DELETE FROM user_channel WHERE user_id=#{user.id} AND channel_id=#{channel_id}
+    </delete>
+
+</mapper>

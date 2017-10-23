@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis">
+
+    <select id="user_get" resultType="User" parameterType="map">
+        SELECT * FROM users WHERE source_id=#{sourceId} AND auth_source=#{authSource} LIMIT 1
+    </select>
+
+    <select id="user_get_by_id" resultType="User" parameterType="map">
+        SELECT * FROM users WHERE id=#{id} LIMIT 1
+    </select>
+
+    <select id="user_get_by_token" resultType="User" parameterType="String" resultMap="user">
+        SELECT
+        u.id as u_id,
+        u.source_id as u_source_id,
+        u.auth_source as u_auth_source,
+        u.login as u_login,
+        u.token as u_token,
+        c.id as c_id,
+        c.name as c_name
+        FROM users u
+        LEFT JOIN user_channel uc ON u.id=uc.user_id
+        LEFT JOIN channels c ON c.id=uc.channel_id
+        WHERE u.token=#{token}
+    </select>
+
+    <select id="user_get_cur" resultType="long">
+        SELECT currval('users_id_seq1')
+    </select>
+
+    <insert id="user_add" parameterType="User">
+        INSERT INTO users (source_id, auth_source, login, token) VALUES (#{sourceId}, #{authSource}, #{login}, #{token})
+    </insert>
+
+    <update id="user_refresh_token" parameterType="User">
+        UPDATE users SET token=#{token} WHERE id=#{id}
+    </update>
+
+</mapper>

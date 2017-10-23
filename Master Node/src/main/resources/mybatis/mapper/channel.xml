@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis">
+
+    <!-- FOR MASTER NODE-->
+
+    <select id="channel_get_all" resultType="Channel" parameterType="map">
+        SELECT * FROM channels LIMIT ${limit} OFFSET ${offset};
+    </select>
+
+    <select id="channel_get_by_user" resultType="Channel" parameterType="long">
+        SELECT
+          *
+        FROM channels c
+        LEFT JOIN user_channel uc ON c.id=uc.channel_id
+          WHERE uc.user_id=#{value}
+    </select>
+
+    <insert id="channel_create" parameterType="Channel">
+        INSERT INTO channels (name, host) VALUES(#{name}, #{host})
+    </insert>
+    
+    <select id="channel_get_cur" parameterType="Channel" resultType="Channel">
+        SELECT * FROM channels WHERE name=#{name} AND host=#{host} ORDER BY id DESC LIMIT 1
+    </select>
+
+    <insert id="channel_add_member" parameterType="map">
+        INSERT INTO user_channel (user_id, channel_id) VALUES (#{user_id}, #{channel_id})
+    </insert>
+
+    <delete id="channel_expel_member" parameterType="map">
+        DELETE FROM user_channel WHERE user_id=#{user_id} AND channel_id=#{channel_id}
+    </delete>
+
+    <select id="channel_get" resultType="Channel" parameterType="long" resultMap="channel">
+        SELECT
+          c.id as c_id,
+          c.name as c_name,
+          c.host as c_host,
+          u.id as u_id,
+          u.source_id as u_source_id,
+          u.auth_source as u_auth_source,
+          u.login as u_login,
+          u.token as u_token
+        FROM channels c
+        LEFT JOIN user_channel uc ON c.id=uc.channel_id
+        LEFT JOIN users u ON u.id=uc.user_id
+          WHERE c.id=#{1}
+    </select>
+
+</mapper>

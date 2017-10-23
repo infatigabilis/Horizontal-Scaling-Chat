@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="logImpl" value="LOG4J2"/>
+    </settings>
+    <typeAliases>
+        <typeAlias alias="User" type="otus.project.horizontal_scaling_chat.db_node.db.dataset.User"/>
+        <typeAlias alias="Channel" type="otus.project.horizontal_scaling_chat.db_node.db.dataset.Channel"/>
+        <typeAlias alias="Message" type="otus.project.horizontal_scaling_chat.db_node.db.dataset.Message"/>
+    </typeAliases>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="org.postgresql.Driver"/>
+                <property name="url" value="jdbc:postgresql://localhost:5432/testing_test"/>
+                <property name="username" value="homestead"/>
+                <property name="password" value="secret"/>
+            </dataSource>
+        </environment>
+    </environments>
+    <mappers>
+        <mapper resource="mybatis/mapper/channel.xml"/>
+        <mapper resource="mybatis/mapper/user.xml"/>
+        <mapper resource="mybatis/mapper/message.xml"/>
+
+        <mapper resource="mybatis/result_map/result_map.xml"/>
+
+        <mapper resource="mybatis/mapper/common.xml"/>
+    </mappers>
+</configuration>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis">
+
+    <select id="message_get" parameterType="map" resultMap="messages">
+        SELECT
+          m.id as m_id,
+          m.text as m_text,
+          m.created_at as m_created_at,
+          u.id as u_id,
+          u.source_id as u_source_id,
+          u.auth_source as u_auth_source,
+          u.login as u_login,
+          u.token as u_token
+        FROM messages m
+        JOIN users u ON u.id=m.user_id
+          WHERE channel_id=#{channelId}
+          ORDER BY created_at DESC
+          LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <select id="message_count" resultType="map">
+        SELECT
+          channel_id,
+          COUNT(*)
+        FROM messages
+          GROUP BY channel_id
+    </select>
+
+    <insert id="message_write" parameterType="Message">
+        INSERT INTO messages (text, channel_id, user_id) VALUES (#{text}, #{channel.id}, #{sender.id})
+    </insert>
+
+    <delete id="message_clear_last" parameterType="int">
+        DELETE FROM messages WHERE id IN (SELECT id FROM messages ORDER BY created_at ASC LIMIT #{value})
+    </delete>
+
+</mapper>
