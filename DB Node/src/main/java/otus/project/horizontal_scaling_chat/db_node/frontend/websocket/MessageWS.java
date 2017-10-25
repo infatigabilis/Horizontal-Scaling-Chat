@@ -3,8 +3,8 @@ package otus.project.horizontal_scaling_chat.db_node.frontend.websocket;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import otus.project.horizontal_scaling_chat.beans.BeanHelper;
+import otus.project.horizontal_scaling_chat.db.dataset.User;
 import otus.project.horizontal_scaling_chat.db_node.db.dataset.Message;
-import otus.project.horizontal_scaling_chat.db_node.db.dataset.User;
 import otus.project.horizontal_scaling_chat.db_node.frontend.JsonFrontend;
 import otus.project.horizontal_scaling_chat.db_node.db.service.MessageService;
 import otus.project.horizontal_scaling_chat.exception.DBEnitytNotFoundException;
@@ -31,9 +31,9 @@ public class MessageWS extends JsonFrontend {
     public void handleMsg(Session session, String msg) {
         TransmittedData data = TransmittedData.fromJson(msg);
 
-        if (data instanceof User) {
-            User user = (User) userService.get(((User) data).getToken())
-                    .orElseThrow(() -> new DBEnitytNotFoundException(User.class, ((User) data).getToken()));
+        if (data instanceof Token) {
+            User user = (User) userService.get(((Token) data).value)
+                    .orElseThrow(() -> new DBEnitytNotFoundException(User.class, ((Token) data).value));
             userSessionMap.put(user, session);
             sessionUserMap.put(session, user);
         } else if (data instanceof Message) {
@@ -54,6 +54,10 @@ public class MessageWS extends JsonFrontend {
                 logger.error(e.getMessage());
             }
         }
+    }
+
+    private class Token extends TransmittedData {
+        private String value;
     }
 
     @OnClose

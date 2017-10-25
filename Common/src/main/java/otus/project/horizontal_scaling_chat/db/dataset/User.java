@@ -1,13 +1,12 @@
-package otus.project.horizontal_scaling_chat.db_node.db.dataset;
+package otus.project.horizontal_scaling_chat.db.dataset;
 
 import com.google.gson.annotations.Expose;
-import otus.project.horizontal_scaling_chat.db.dataset.CommonUser;
 import otus.project.horizontal_scaling_chat.share.TransmittedData;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class User extends TransmittedData implements CommonUser {
+public class User {
     @Expose private long id;
     @Expose private String sourceId;
     @Expose private String authSource;
@@ -25,8 +24,11 @@ public class User extends TransmittedData implements CommonUser {
         this.token = token;
     }
 
+    public enum Role {
+        USER
+    }
 
-    @Override
+
     public long getId() {
         return id;
     }
@@ -35,7 +37,6 @@ public class User extends TransmittedData implements CommonUser {
         this.id = id;
     }
 
-    @Override
     public String getSourceId() {
         return sourceId;
     }
@@ -44,7 +45,6 @@ public class User extends TransmittedData implements CommonUser {
         this.sourceId = sourceId;
     }
 
-    @Override
     public String getAuthSource() {
         return authSource;
     }
@@ -53,7 +53,6 @@ public class User extends TransmittedData implements CommonUser {
         this.authSource = authSource;
     }
 
-    @Override
     public String getLogin() {
         return login;
     }
@@ -62,7 +61,6 @@ public class User extends TransmittedData implements CommonUser {
         this.login = login;
     }
 
-    @Override
     public String getToken() {
         return token;
     }

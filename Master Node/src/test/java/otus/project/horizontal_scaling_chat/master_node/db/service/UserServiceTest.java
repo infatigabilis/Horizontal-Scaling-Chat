@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import otus.project.horizontal_scaling_chat.master_node.db.DBTest;
-import otus.project.horizontal_scaling_chat.master_node.db.dataset.User;
+import otus.project.horizontal_scaling_chat.db.dataset.User;
 
 import static org.junit.Assert.*;
 
@@ -25,8 +25,16 @@ public class UserServiceTest extends DBTest {
     }
 
     @Test
+    public void getById() {
+        userService.add(new User("1", "google", "login", "token"));
+        User user = userService.get("1", "google");
+        assertEquals(user, userService.get(user.getId()));
+    }
+
+    @Test
     public void getByToken() {
         userService.add(new User("1", "google", "login", "token"));
+        userService.get("1", "google");
         assertTrue(userService.get("token").get() != null);
     }
 
@@ -38,6 +46,7 @@ public class UserServiceTest extends DBTest {
 
         user.setToken("token2");
         userService.refreshToken(user);
+        User act = (User) userService.get(user.getToken()).get();
         assertTrue(userService.get(user.getToken()).get() != null);
     }
 }

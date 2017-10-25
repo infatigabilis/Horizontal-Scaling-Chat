@@ -7,6 +7,7 @@ import otus.project.horizontal_scaling_chat.db_node.db.service.MessageService;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import java.util.concurrent.Executors;
 
 @WebListener
 public class CaretakerListener implements ServletContextListener {

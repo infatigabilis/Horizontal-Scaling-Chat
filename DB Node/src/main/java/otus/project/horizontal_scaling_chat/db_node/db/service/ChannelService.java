@@ -1,10 +1,8 @@
 package otus.project.horizontal_scaling_chat.db_node.db.service;
 
 import org.apache.ibatis.session.SqlSession;
-import otus.project.horizontal_scaling_chat.db.dataset.CommonChannel;
-import otus.project.horizontal_scaling_chat.db.dataset.CommonUser;
+import otus.project.horizontal_scaling_chat.db.dataset.User;
 import otus.project.horizontal_scaling_chat.db_node.db.dataset.Channel;
-import otus.project.horizontal_scaling_chat.db_node.db.dataset.User;
 import otus.project.horizontal_scaling_chat.db_node.db.DBService;
 import otus.project.horizontal_scaling_chat.share.DBNodeChannelService;
 import otus.project.horizontal_scaling_chat.utils.MapBuilder;
@@ -36,6 +34,11 @@ public class ChannelService implements DBNodeChannelService {
         }
     }
 
+    @Override
+    public void create(otus.project.horizontal_scaling_chat.db.dataset.Channel channel, User user) {
+
+    }
+
     public void addMember(long channelId, User member) {
         try(SqlSession session = dbService.openSession()) {
             session.insert("channel_add_member", new MapBuilder<String, Object>()
@@ -45,6 +48,11 @@ public class ChannelService implements DBNodeChannelService {
             );
             session.commit();
         }
+    }
+
+    @Override
+    public void expelMember(long l, long l1) {
+
     }
 
     // TODO delete if members count is 0
@@ -57,20 +65,5 @@ public class ChannelService implements DBNodeChannelService {
             );
             session.commit();
         }
-    }
-
-    @Override
-    public void create(CommonChannel commonChannel, CommonUser commonUser) {
-
-    }
-
-    @Override
-    public void addMember(long l, CommonUser commonUser) {
-
-    }
-
-    @Override
-    public void expelMember(long l, long l1) {
-
     }
 }

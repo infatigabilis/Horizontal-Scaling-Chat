@@ -1,7 +1,7 @@
 package otus.project.horizontal_scaling_chat.db_node.frontend.rest;
 
 import otus.project.horizontal_scaling_chat.beans.BeanHelper;
-import otus.project.horizontal_scaling_chat.db_node.db.dataset.User;
+import otus.project.horizontal_scaling_chat.db.dataset.User;
 import otus.project.horizontal_scaling_chat.db_node.frontend.JsonFrontend;
 import otus.project.horizontal_scaling_chat.db_node.db.service.MessageService;
 import otus.project.horizontal_scaling_chat.frontend.auth.Secured;

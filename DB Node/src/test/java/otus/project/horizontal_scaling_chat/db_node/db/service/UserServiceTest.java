@@ -1,12 +1,10 @@
 package otus.project.horizontal_scaling_chat.db_node.db.service;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import otus.project.horizontal_scaling_chat.DBTest;
-import otus.project.horizontal_scaling_chat.db_node.db.dataset.Channel;
-import otus.project.horizontal_scaling_chat.db_node.db.dataset.User;
+import otus.project.horizontal_scaling_chat.db.dataset.User;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

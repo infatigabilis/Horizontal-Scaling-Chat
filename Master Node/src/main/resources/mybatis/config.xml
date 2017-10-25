@@ -7,7 +7,7 @@
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
     <typeAliases>
-        <typeAlias alias="User" type="otus.project.horizontal_scaling_chat.master_node.db.dataset.User"/>
+        <typeAlias alias="User" type="otus.project.horizontal_scaling_chat.db.dataset.User"/>
         <typeAlias alias="Channel" type="otus.project.horizontal_scaling_chat.master_node.db.dataset.Channel"/>
     </typeAliases>
     <environments default="development">
@@ -15,7 +15,7 @@
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="org.postgresql.Driver"/>
-                <property name="url" value="jdbc:postgresql://localhost:5432/test"/>
+                <property name="url" value="jdbc:postgresql://localhost:5432/chat_master"/>
                 <property name="username" value="homestead"/>
                 <property name="password" value="secret"/>
             </dataSource>

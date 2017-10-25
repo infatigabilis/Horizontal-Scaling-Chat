@@ -1,10 +1,9 @@
 package otus.project.horizontal_scaling_chat.db_node.db.service;
 
 import org.apache.ibatis.session.SqlSession;
-import otus.project.horizontal_scaling_chat.db.dataset.CommonUser;
+import otus.project.horizontal_scaling_chat.db.dataset.User;
 import otus.project.horizontal_scaling_chat.db.service.CommonUserService;
 import otus.project.horizontal_scaling_chat.db_node.db.DBService;
-import otus.project.horizontal_scaling_chat.db_node.db.dataset.User;
 import otus.project.horizontal_scaling_chat.utils.MapBuilder;
 
 import java.util.Optional;
@@ -33,7 +32,7 @@ public class UserService implements CommonUserService {
     }
 
     @Override
-    public Optional<CommonUser> get(String token) {
+    public Optional<User> get(String token) {
         try (SqlSession session = dbService.openSession()) {
             return Optional.ofNullable(session.selectOne("user_get_by_token", token));
         }

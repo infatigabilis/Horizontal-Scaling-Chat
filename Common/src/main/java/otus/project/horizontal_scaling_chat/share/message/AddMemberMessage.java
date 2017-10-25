@@ -1,19 +1,19 @@
 package otus.project.horizontal_scaling_chat.share.message;
 
-import otus.project.horizontal_scaling_chat.db.dataset.CommonUser;
+import otus.project.horizontal_scaling_chat.db.dataset.User;
 import otus.project.horizontal_scaling_chat.share.DBNodeChannelService;
 
 public class AddMemberMessage extends Message {
     private final long channelId;
-    private final CommonUser commonUser;
+    private final User user;
 
-    public AddMemberMessage(long channelId, CommonUser commonUser) {
+    public AddMemberMessage(long channelId, User user) {
         this.channelId = channelId;
-        this.commonUser = commonUser;
+        this.user = user;
     }
 
     @Override
     public void handle(DBNodeChannelService channelService) {
-        channelService.addMember(channelId, commonUser);
+        channelService.addMember(channelId, user);
     }
 }

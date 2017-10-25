@@ -13,32 +13,32 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.util.*;
+import java.util.concurrent.Executors;
 
 public class Sharer {
     private static final Logger logger = LogManager.getLogger();
     private static final String MESSAGES_SEPARATOR = "\n\n";
 
-    private final int PORT;
-
+    private final int port;
 
     private static Queue<String> hosts = new LinkedList<>();
     private static Map<String, SocketChannel> dbNodes = new HashMap<>();
 
     public Sharer(int port) {
-        PORT = port;
+        this.port = port;
     }
 
     @SuppressWarnings("InfiniteLoopStatement")
     public void start() throws Exception {
 
         try (ServerSocketChannel serverSocketChannel = ServerSocketChannel.open()) {
-            serverSocketChannel.bind(new InetSocketAddress("localhost", PORT));
+            serverSocketChannel.bind(new InetSocketAddress("localhost", port));
 
             serverSocketChannel.configureBlocking(false);
             Selector selector = Selector.open();
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT, null);
 
-            logger.info("Server start on port " + PORT);
+            logger.info("Started on port: " + port);
 
             while (true) {
                 selector.select();
@@ -47,7 +47,7 @@ public class Sharer {
                     SelectionKey key = iterator.next();
 
                     try {
-                        if (key.isAcceptable()) accept(selector, serverSocketChannel);
+                        if (key.isAcceptable()) accept(serverSocketChannel);
                     } catch (Exception e) {
                         logger.error(e.getMessage());
                     } finally {
@@ -58,7 +58,7 @@ public class Sharer {
         }
     }
 
-    private void accept(Selector selector, ServerSocketChannel serverChannel) throws IOException {
+    private void accept(ServerSocketChannel serverChannel) throws IOException {
         SocketChannel channel = serverChannel.accept();
         String remoteAddress = channel.getRemoteAddress().toString();
         logger.info("Connection Accepted: " + remoteAddress);

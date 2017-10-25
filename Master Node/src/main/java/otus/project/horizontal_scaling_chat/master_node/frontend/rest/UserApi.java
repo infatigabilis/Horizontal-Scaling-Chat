@@ -2,8 +2,9 @@ package otus.project.horizontal_scaling_chat.master_node.frontend.rest;
 
 import com.google.gson.Gson;
 import otus.project.horizontal_scaling_chat.beans.BeanHelper;
-import otus.project.horizontal_scaling_chat.master_node.db.dataset.User;
+import otus.project.horizontal_scaling_chat.db.dataset.User;
 import otus.project.horizontal_scaling_chat.master_node.db.service.UserService;
+import otus.project.horizontal_scaling_chat.master_node.share.Sharer;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.*;
@@ -22,13 +23,14 @@ import java.net.URL;
 public class UserApi {
     private final UserService userService = BeanHelper.getBean(UserService.class);
 
-//  https://accounts.google.com/o/oauth2/v2/auth?client_id=764305920855-mvd0tmc97rvpn2mmgvr5r4b1th1t13a7.apps.googleusercontent.com&redirect_uri=http://localhost:8080/root/api/auth&scope=https://www.googleapis.com/auth/plus.me&response_type=code
+//  https://accounts.google.com/o/oauth2/v2/auth?client_id=764305920855-mvd0tmc97rvpn2mmgvr5r4b1th1t13a7.apps.googleusercontent.com&redirect_uri=http://localhost:8080/api/auth&scope=https://www.googleapis.com/auth/plus.me&response_type=code
     @GET
     public String auth(@QueryParam("code") String code) throws IOException, URISyntaxException {
         String accessToken = getAccessToken(code);
         User user = getGoogleUser(accessToken);
 
         userService.addOrRefresh(user);
+//      todo refresh db node token
 
         return accessToken;
     }
@@ -40,7 +42,7 @@ public class UserApi {
         String urlParam =
                 "client_id=764305920855-mvd0tmc97rvpn2mmgvr5r4b1th1t13a7.apps.googleusercontent.com&" +
                         "client_secret=oMf2y5Wf4QBynRke8NoSnGvb&grant_type=authorization_code&" +
-                        "redirect_uri=http://localhost:8080/root/api/auth&" +
+                        "redirect_uri=http://localhost:8080/api/auth&" +
                         "code=" + code;
 
         HttpsURLConnection con = (HttpsURLConnection) new URL(url).openConnection();

@@ -1,6 +1,6 @@
 package otus.project.horizontal_scaling_chat.frontend.auth;
 
-import otus.project.horizontal_scaling_chat.db.dataset.CommonUser;
+import otus.project.horizontal_scaling_chat.db.dataset.User;
 
 import javax.ws.rs.NameBinding;
 import java.lang.annotation.Retention;
@@ -14,5 +14,5 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Target({TYPE, METHOD})
 public @interface Secured {
-    CommonUser.Role[] value() default {};
+    User.Role[] value() default {};
 }
