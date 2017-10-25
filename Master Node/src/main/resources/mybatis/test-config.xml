@@ -8,7 +8,7 @@
         <setting name="logImpl" value="LOG4J2"/>
     </settings>
     <typeAliases>
-        <typeAlias alias="User" type="otus.project.horizontal_scaling_chat.db.dataset.User"/>
+        <typeAlias alias="User" type="otus.project.horizontal_scaling_chat.master_node.db.dataset.User"/>
         <typeAlias alias="Channel" type="otus.project.horizontal_scaling_chat.master_node.db.dataset.Channel"/>
     </typeAliases>
     <environments default="development">

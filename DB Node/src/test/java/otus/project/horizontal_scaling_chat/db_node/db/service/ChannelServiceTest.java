@@ -9,7 +9,7 @@ import otus.project.horizontal_scaling_chat.DBTest;
 import otus.project.horizontal_scaling_chat.db_node.db.dataset.Channel;
 import otus.project.horizontal_scaling_chat.db_node.db.DBService;
 import otus.project.horizontal_scaling_chat.share.TransmittedData;
-import otus.project.horizontal_scaling_chat.share.message.CreateChannelMessage;
+import otus.project.horizontal_scaling_chat.share.message.channel.CreateChannelMessage;
 
 import static org.junit.Assert.assertEquals;
 
@@ -42,6 +42,12 @@ public class ChannelServiceTest extends DBTest {
     }
 
     @Test
+    public void test() {
+        String json = "{\"commonChannel\":{\"host\":\"/127.0.0.1:59946\",\"members\":[],\"id\":62,\"name\":\"Channel 1\"},\"commonUser\":{\"channels\":[],\"id\":85,\"sourceId\":\"100984083937515165319\",\"authSource\":\"google\",\"login\":\"Данил Иванов\",\"token\":\"ya29.GlzvBELTdS3FiQacoWUA_saqCDLpNMty6PLxTODSzKpbO-WaRQ2U12L81D81ojgkWouTm10iPEGH-zMvKN5O8cX57mzYoBNe4JxGCYPyZ8bWiQF5BOP5gP89BefMfA\"},\"className\":\"otus.project.horizontal_scaling_chat.share.message.channel.CreateChannelMessage\"}";
+        TransmittedData msg = (TransmittedData) new Gson().fromJson(json, CreateChannelMessage.class);
+    }
+
+    @Test
     public void addMember() {
         channelService.addMember(channel1.getId(), user2);
         channel1 = channelService.get(channel1.getId()).get();
@@ -52,7 +58,7 @@ public class ChannelServiceTest extends DBTest {
 
     @Test
     public void expelMember() {
-        channelService.expelMember(channel1.getId(), user1);
+        channelService.expelMember(channel1.getId(), user1.getId());
         channel1 = channelService.get(channel1.getId()).get();
 
         assertEquals(0, channel1.getMembers().size());

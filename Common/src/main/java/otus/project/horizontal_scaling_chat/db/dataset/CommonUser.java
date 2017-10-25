@@ -1,23 +1,18 @@
 package otus.project.horizontal_scaling_chat.db.dataset;
 
 import com.google.gson.annotations.Expose;
-import otus.project.horizontal_scaling_chat.share.TransmittedData;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class User {
+public class CommonUser {
     @Expose private long id;
     @Expose private String sourceId;
     @Expose private String authSource;
     @Expose private String login;
     private String token;
-    private List<Channel> channels = new ArrayList<>();
 
-    public User() {
+    public CommonUser() {
     }
 
-    public User(String sourceId, String authSource, String login, String token) {
+    public CommonUser(String sourceId, String authSource, String login, String token) {
         this.sourceId = sourceId;
         this.authSource = authSource;
         this.login = login;
@@ -69,16 +64,8 @@ public class User {
         this.token = token;
     }
 
-    public List<Channel> getChannels() {
-        return channels;
-    }
-
-    public void setChannels(List<Channel> channels) {
-        this.channels = channels;
-    }
-
     @Override
     public boolean equals(Object obj) {
-        return id == (((User) obj).id);
+        return id == (((CommonUser) obj).id);
     }
 }

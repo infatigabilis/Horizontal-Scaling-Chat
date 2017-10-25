@@ -23,7 +23,7 @@ public class BeanConfig {
 
     @Bean
     public ChannelService channelService() {
-        return new ChannelService(dbService());
+        return new ChannelService(dbService(), userService());
     }
 
     @Bean

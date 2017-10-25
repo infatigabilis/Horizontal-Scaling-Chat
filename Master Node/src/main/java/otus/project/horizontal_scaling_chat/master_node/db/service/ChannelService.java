@@ -1,6 +1,8 @@
 package otus.project.horizontal_scaling_chat.master_node.db.service;
 
 import org.apache.ibatis.session.SqlSession;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import otus.project.horizontal_scaling_chat.master_node.db.DBService;
 import otus.project.horizontal_scaling_chat.master_node.db.dataset.Channel;
 import otus.project.horizontal_scaling_chat.utils.MapBuilder;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ChannelService {
+    private static final Logger logger = LogManager.getLogger();
     private static final int PAGINATION_SIZE = 40;
 
     private final DBService dbService;
@@ -53,6 +56,7 @@ public class ChannelService {
             Channel cur = getCur(channel);
             addMember(cur.getId(), creatorId);
             session.commit();
+            logger.info("Created channel " + channel + " with creator with id " + creatorId);
 
             return cur;
         }
@@ -66,6 +70,7 @@ public class ChannelService {
                     .build()
             );
             session.commit();
+            logger.info("Added member with id " + userId + " of channel with id " + channelId);
         }
     }
 
@@ -77,6 +82,7 @@ public class ChannelService {
                     .build()
             );
             session.commit();
+            logger.info("Expeled member with id " + userId + " of channel with id " + channelId);
         }
     }
 }

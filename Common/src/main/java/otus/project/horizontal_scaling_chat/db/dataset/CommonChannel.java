@@ -5,15 +5,14 @@ import com.google.gson.annotations.Expose;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Channel {
+public class CommonChannel {
     @Expose private long id;
     @Expose private String name;
-    private List<User> members = new ArrayList<>();
 
-    public Channel() {
+    public CommonChannel() {
     }
 
-    public Channel(long id, String name) {
+    public CommonChannel(long id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -36,16 +35,8 @@ public class Channel {
         this.name = name;
     }
 
-    public List<User> getMembers() {
-        return members;
-    }
-
-    public void setMembers(List<User> members) {
-        this.members = members;
-    }
-
     @Override
     public boolean equals(Object obj) {
-        return id == ((Channel) obj).id;
+        return id == ((CommonChannel) obj).id;
     }
 }

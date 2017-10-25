@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="mybatis">
-    <select id="user_get" resultType="User" parameterType="map">
-        SELECT * FROM users WHERE source_id=#{sourceId} AND auth_source=#{authSource} LIMIT 1
+    <select id="user_get" resultType="User" parameterType="map" resultMap="user">
+        SELECT
+          u.id as u_id,
+          u.source_id as u_source_id,
+          u.auth_source as u_auth_source,
+          u.login as u_login,
+          u.token as u_token,
+          c.id as c_id,
+          c.name as c_name,
+          c.host as c_host
+        FROM users u
+        LEFT JOIN user_channel uc ON u.id=uc.user_id
+        LEFT JOIN channels c ON c.id=uc.channel_id
+         WHERE source_id=#{sourceId} AND auth_source=#{authSource}
     </select>
 
     <select id="user_get_by_id" resultType="User" parameterType="map">
@@ -17,7 +29,8 @@
           u.login as u_login,
           u.token as u_token,
           c.id as c_id,
-          c.name as c_name
+          c.name as c_name,
+          c.host as c_host
         FROM users u
         LEFT JOIN user_channel uc ON u.id=uc.user_id
         LEFT JOIN channels c ON c.id=uc.channel_id

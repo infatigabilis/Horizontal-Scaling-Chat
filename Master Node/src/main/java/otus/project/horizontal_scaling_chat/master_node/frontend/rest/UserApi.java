@@ -2,9 +2,11 @@ package otus.project.horizontal_scaling_chat.master_node.frontend.rest;
 
 import com.google.gson.Gson;
 import otus.project.horizontal_scaling_chat.beans.BeanHelper;
-import otus.project.horizontal_scaling_chat.db.dataset.User;
+import otus.project.horizontal_scaling_chat.master_node.db.dataset.Channel;
+import otus.project.horizontal_scaling_chat.master_node.db.dataset.User;
 import otus.project.horizontal_scaling_chat.master_node.db.service.UserService;
 import otus.project.horizontal_scaling_chat.master_node.share.Sharer;
+import otus.project.horizontal_scaling_chat.share.message.user.RefreshUserTokenMessage;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.ws.rs.*;
@@ -16,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.List;
 
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
@@ -29,8 +32,18 @@ public class UserApi {
         String accessToken = getAccessToken(code);
         User user = getGoogleUser(accessToken);
 
-        userService.addOrRefresh(user);
-//      todo refresh db node token
+        User cur = userService.get(user.getSourceId(), user.getAuthSource());
+        if (cur != null) {
+            cur.setToken(user.getToken());
+            userService.refreshToken(cur);
+
+            List<Channel> channelList = cur.getChannels();
+            cur.setChannels(null);
+            for (Channel i : channelList)
+                Sharer.send(i.getHost(), new RefreshUserTokenMessage(cur));
+        }
+        else
+            userService.add(user);
 
         return accessToken;
     }

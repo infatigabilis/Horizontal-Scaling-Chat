@@ -1,7 +1,7 @@
 package otus.project.horizontal_scaling_chat.frontend.auth;
 
 import otus.project.horizontal_scaling_chat.beans.BeanHelper;
-import otus.project.horizontal_scaling_chat.db.dataset.User;
+import otus.project.horizontal_scaling_chat.db.dataset.CommonUser;
 import otus.project.horizontal_scaling_chat.db.service.CommonUserService;
 import otus.project.horizontal_scaling_chat.exception.InvalidTokenException;
 import otus.project.horizontal_scaling_chat.exception.WrongTokenException;
@@ -30,13 +30,13 @@ public class AuthFilter implements ContainerRequestFilter {
 
     public void filter(ContainerRequestContext requestContext) throws IOException {
         String token = getValidToken(requestContext.getHeaderString(HttpHeaders.AUTHORIZATION));
-        User user = commonUserService.get(token).orElseThrow(WrongTokenException::new);
+        CommonUser commonUser = commonUserService.get(token).orElseThrow(WrongTokenException::new);
 //        checkRole(commonUser);
 
         SecurityContext securityContext = new SecurityContext() {
             @Override
             public Principal getUserPrincipal() {
-                return () -> "" + user.getId();
+                return () -> "" + commonUser.getId();
             }
 
             @Override
@@ -65,37 +65,37 @@ public class AuthFilter implements ContainerRequestFilter {
         return authorizationHeader.substring("Bearer".length()).trim();
     }
 
-    private void checkRole(User user) {
+    private void checkRole(CommonUser commonUser) {
         Class<?> resourceClass = resourceInfo.getResourceClass();
-        List<User.Role> classRoles = extractRoles(resourceClass);
+        List<CommonUser.Role> classRoles = extractRoles(resourceClass);
 
         Method resourceMethod = resourceInfo.getResourceMethod();
-        List<User.Role> methodRoles = extractRoles(resourceMethod);
+        List<CommonUser.Role> methodRoles = extractRoles(resourceMethod);
 
         if (methodRoles.isEmpty()) {
-            checkPermissions(classRoles, user);
+            checkPermissions(classRoles, commonUser);
         } else {
-            checkPermissions(methodRoles, user);
+            checkPermissions(methodRoles, commonUser);
         }
     }
 
-    private List<User.Role> extractRoles(AnnotatedElement annotatedElement) {
+    private List<CommonUser.Role> extractRoles(AnnotatedElement annotatedElement) {
         if (annotatedElement == null) {
-            return new ArrayList<User.Role>();
+            return new ArrayList<CommonUser.Role>();
         } else {
             Secured secured = annotatedElement.getAnnotation(Secured.class);
             if (secured == null) {
-                return new ArrayList<User.Role>();
+                return new ArrayList<CommonUser.Role>();
             } else {
-                User.Role[] allowedRoles = secured.value();
+                CommonUser.Role[] allowedRoles = secured.value();
                 return Arrays.asList(allowedRoles);
             }
         }
     }
 
-    private void checkPermissions(List<User.Role> roles, User commonUser) {
+    private void checkPermissions(List<CommonUser.Role> roles, CommonUser commonCommonUser) {
 //        for (CommonUser.Role role : roles)
-//            if (role.equals(commonUser.getRole())) return;
+//            if (role.equals(commonCommonUser.getRole())) return;
 //
 //        throw new ForbiddenException();
     }

@@ -1,8 +1,16 @@
 package otus.project.horizontal_scaling_chat.db_node.share;
 
-import otus.project.horizontal_scaling_chat.share.DBNodeChannelService;
+import com.google.gson.Gson;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import otus.project.horizontal_scaling_chat.db_node.db.service.ChannelService;
+import otus.project.horizontal_scaling_chat.db_node.db.service.UserService;
 import otus.project.horizontal_scaling_chat.share.TransmittedData;
 import otus.project.horizontal_scaling_chat.share.message.Message;
+import otus.project.horizontal_scaling_chat.share.message.channel.ChannelMessage;
+import otus.project.horizontal_scaling_chat.share.message.channel.CreateChannelMessage;
+import otus.project.horizontal_scaling_chat.share.message.user.UserMessage;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -14,12 +22,14 @@ public class Receiver {
 
     private StringBuilder readBuilder = new StringBuilder();
 
-    private final DBNodeChannelService channelService;
+    private final ChannelService channelService;
+    private final UserService userService;
     private final String sharerHostname;
     private final int sharerPort;
 
-    public Receiver(DBNodeChannelService channelService, String sharerHostname, int sharerPort) {
+    public Receiver(ChannelService channelService, UserService userService, String sharerHostname, int sharerPort) {
         this.channelService = channelService;
+        this.userService = userService;
         this.sharerHostname = sharerHostname;
         this.sharerPort = sharerPort;
     }
@@ -38,7 +48,9 @@ public class Receiver {
 
                 if (part.length() != read) {
                     Message msg = (Message) TransmittedData.fromJson(readBuilder.toString());
-                    msg.handle(channelService);
+
+                    if (msg instanceof ChannelMessage) ((ChannelMessage) msg).handleChannel(channelService);
+                    else if (msg instanceof UserMessage) ((UserMessage) msg).handleUser(userService);
 
                     readBuilder = new StringBuilder();
                 }

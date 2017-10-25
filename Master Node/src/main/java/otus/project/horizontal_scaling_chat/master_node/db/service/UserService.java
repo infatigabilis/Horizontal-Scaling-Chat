@@ -1,14 +1,18 @@
 package otus.project.horizontal_scaling_chat.master_node.db.service;
 
 import org.apache.ibatis.session.SqlSession;
-import otus.project.horizontal_scaling_chat.db.dataset.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import otus.project.horizontal_scaling_chat.db.dataset.CommonUser;
 import otus.project.horizontal_scaling_chat.db.service.CommonUserService;
 import otus.project.horizontal_scaling_chat.master_node.db.DBService;
+import otus.project.horizontal_scaling_chat.master_node.db.dataset.User;
 import otus.project.horizontal_scaling_chat.utils.MapBuilder;
 
 import java.util.Optional;
 
 public class UserService implements CommonUserService {
+    private static Logger logger = LogManager.getLogger();
     private final DBService dbService;
 
     public UserService(DBService dbService) {
@@ -32,7 +36,7 @@ public class UserService implements CommonUserService {
     }
 
     @Override
-    public Optional<User> get(String token) {
+    public Optional<CommonUser> get(String token) {
         try (SqlSession session = dbService.openSession()) {
             return Optional.ofNullable(session.selectOne("user_get_by_token", token));
         }
@@ -42,19 +46,16 @@ public class UserService implements CommonUserService {
         try (SqlSession session = dbService.openSession()) {
             session.insert("user_add", user);
             session.commit();
+            logger.info("Created user " + user);
         }
     }
 
-    public void refreshToken(User user) {
+    @Override
+    public void refreshToken(CommonUser user) {
         try (SqlSession session = dbService.openSession()) {
             session.update("user_refresh_token", user);
             session.commit();
+            logger.info("Refreshed token of user " + user);
         }
-    }
-
-    public void addOrRefresh(User user) {
-        if (get(user.getSourceId(), user.getAuthSource()) != null)
-            refreshToken(user);
-        else add(user);
     }
 }

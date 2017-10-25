@@ -1,7 +1,6 @@
 package otus.project.horizontal_scaling_chat.db_node.db.dataset;
 
 import com.google.gson.annotations.Expose;
-import otus.project.horizontal_scaling_chat.db.dataset.User;
 import otus.project.horizontal_scaling_chat.share.TransmittedData;
 
 import java.util.Date;

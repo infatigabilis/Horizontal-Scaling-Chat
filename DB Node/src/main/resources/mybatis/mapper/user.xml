@@ -30,7 +30,7 @@
     </select>
 
     <insert id="user_add" parameterType="User">
-        INSERT INTO users (source_id, auth_source, login, token) VALUES (#{sourceId}, #{authSource}, #{login}, #{token})
+        INSERT INTO users (id, source_id, auth_source, login, token) VALUES (#{id}, #{sourceId}, #{authSource}, #{login}, #{token})
     </insert>
 
     <update id="user_refresh_token" parameterType="User">

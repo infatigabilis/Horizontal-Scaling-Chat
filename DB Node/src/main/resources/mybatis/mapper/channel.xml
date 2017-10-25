@@ -30,7 +30,7 @@
     </insert>
 
     <delete id="channel_expel_member" parameterType="map">
-        DELETE FROM user_channel WHERE user_id=#{user.id} AND channel_id=#{channel_id}
+        DELETE FROM user_channel WHERE user_id=#{user_id} AND channel_id=#{channel_id}
     </delete>
 
 </mapper>

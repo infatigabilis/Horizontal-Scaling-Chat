@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import otus.project.horizontal_scaling_chat.master_node.beans.BeanConfig;
-import otus.project.horizontal_scaling_chat.db.dataset.User;
+import otus.project.horizontal_scaling_chat.master_node.db.dataset.User;
 import otus.project.horizontal_scaling_chat.master_node.db.service.UserService;
 
 import java.io.IOException;

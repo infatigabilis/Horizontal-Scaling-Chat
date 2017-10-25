@@ -1,6 +1,8 @@
 package otus.project.horizontal_scaling_chat.db_node.db.service;
 
 import org.apache.ibatis.session.SqlSession;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import otus.project.horizontal_scaling_chat.db_node.db.dataset.Channel;
 import otus.project.horizontal_scaling_chat.db_node.db.dataset.Message;
 import otus.project.horizontal_scaling_chat.db_node.db.DBService;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 public class MessageService {
+    private static final Logger logger = LogManager.getLogger();
     public static final int PAGINATION_LIMIT = 30;
 
     private final DBService dbService;
@@ -32,6 +35,7 @@ public class MessageService {
         try(SqlSession session = dbService.openSession()) {
             session.insert("message_write", message);
             session.commit();
+            logger.info("Created message " + message);
         }
     }
 
@@ -62,6 +66,7 @@ public class MessageService {
         try(SqlSession session = dbService.openSession()) {
             session.delete("message_clear_last", amount);
             session.commit();
+            logger.info("Cleared last messages");
         }
     }
 }
