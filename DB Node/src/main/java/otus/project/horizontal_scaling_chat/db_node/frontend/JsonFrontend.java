@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import otus.project.horizontal_scaling_chat.beans.BeanHelper;
 import otus.project.horizontal_scaling_chat.db_node.db.dataset.Channel;
+import otus.project.horizontal_scaling_chat.db_node.db.dataset.User;
 import otus.project.horizontal_scaling_chat.db_node.db.service.ChannelService;
 import otus.project.horizontal_scaling_chat.db_node.db.service.UserService;
 import otus.project.horizontal_scaling_chat.exception.DBEnitytNotFoundException;
@@ -27,10 +28,10 @@ public class JsonFrontend {
         return gson.toJson(obj);
     }
 
-    protected void checkMembership(long channelId, String userToken) {
+    protected void checkMembership(long channelId, String id) {
         Channel channel = channelService.get(channelId)
                 .orElseThrow(() -> new DBEnitytNotFoundException(Channel.class, channelId));
-        if (!channel.getMembers().contains(userService.get(userToken).get()))
+        if (!channel.getMembers().contains(userService.get(Long.parseLong(id))))
             throw new ForbiddenException();
     }
 }

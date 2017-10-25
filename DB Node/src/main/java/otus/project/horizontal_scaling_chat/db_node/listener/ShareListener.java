@@ -9,16 +9,19 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import java.io.IOException;
+import java.util.concurrent.Executors;
 
 @WebListener
 public class ShareListener implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent servletContextEvent) {
-        try {
-            new Receiver(BeanHelper.getBean(ChannelService.class), BeanHelper.getBean(UserService.class), "localhost", 7070).run();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Executors.newSingleThreadExecutor().submit(() -> {
+            try {
+                new Receiver(BeanHelper.getBean(ChannelService.class), BeanHelper.getBean(UserService.class), "localhost", 7070).run();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Override

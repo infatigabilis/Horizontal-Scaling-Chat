@@ -21,4 +21,9 @@ public class User extends CommonUser {
     public void setChannels(List<Channel> channels) {
         this.channels = channels;
     }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(getId());
+    }
 }

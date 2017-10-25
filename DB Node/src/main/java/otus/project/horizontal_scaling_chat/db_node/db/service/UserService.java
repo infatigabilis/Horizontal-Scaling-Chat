@@ -31,7 +31,7 @@ public class UserService implements CommonUserService {
 
     public User get(long id) {
         try(SqlSession session = dbService.openSession()) {
-            return session.selectOne("user_get_by_id");
+            return session.selectOne("user_get_by_id", id);
         }
     }
 

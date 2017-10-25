@@ -1,7 +1,11 @@
 package otus.project.horizontal_scaling_chat.db_node.frontend.websocket;
 
+import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import otus.project.horizontal_scaling_chat.beans.BeanHelper;
 import otus.project.horizontal_scaling_chat.db_node.db.dataset.Message;
 import otus.project.horizontal_scaling_chat.db_node.db.dataset.User;
@@ -40,14 +44,14 @@ public class MessageWS extends JsonFrontend {
             Message message = (Message) data;
 
             message.setSender(sessionUserMap.get(session));
-            checkMembership(message.getChannel().getId(), message.getSender().getToken());
+            checkMembership(message.getChannel().getId(), "" + message.getSender().getId());
             messageService.write(message);
             broadcastToMembers(message);
         }
     }
 
     private void broadcastToMembers(Message message) {
-        for (User member : message.getChannel().getMembers()) {
+        for (User member : channelService.get(message.getChannel().getId()).get().getMembers()) {
             try {
                 userSessionMap.get(member).getBasicRemote().sendText(respond(message));
             } catch (IOException e) {
@@ -56,7 +60,7 @@ public class MessageWS extends JsonFrontend {
         }
     }
 
-    private class Token extends TransmittedData {
+    public class Token extends TransmittedData {
         private String value;
     }
 
