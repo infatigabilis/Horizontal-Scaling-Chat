@@ -12,7 +12,7 @@ const styles = {
     overflow: 'auto'
   },
   list: {
-    height: "80%"
+    height: "82%"
   }
 };
 
@@ -21,15 +21,16 @@ export default class MenuHolder extends Component {
     return (
       <div style={styles.holder}>
         <Profile/>
+        <br/>
         <List style={styles.list}>
           <ListItem button>
-            <ListItemText primary="Channel 1" />
+            <ListItemText primary={<a style={{fontSize: 20}}>Channel 1</a>} />
           </ListItem>
           <ListItem button>
-            <ListItemText primary="Channel 2" />
+            <ListItemText primary={<a style={{fontSize: 20}}>Channel 2</a>} />
           </ListItem>
           <ListItem button>
-            <ListItemText primary="Channel 3" />
+            <ListItemText primary={<a style={{fontSize: 20}}>Channel 3</a>} />
           </ListItem>
         </List>
         <FindChannel/>

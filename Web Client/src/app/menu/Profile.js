@@ -15,7 +15,7 @@ export default class Profile extends Component {
       <Paper style={styles.paper} elevation={4}>
 
         <Typography type="headline" component="h2">
-          Name Second
+          Firstname Lastname
         </Typography>
       </Paper>
     )

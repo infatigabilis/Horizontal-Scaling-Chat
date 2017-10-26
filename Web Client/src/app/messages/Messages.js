@@ -5,7 +5,7 @@ import Message from './Message';
 
 const styles = {
   list: {
-    height: '75%',
+    height: '79%',
     padding: '10px 35px 0 35px',
   }
 };
