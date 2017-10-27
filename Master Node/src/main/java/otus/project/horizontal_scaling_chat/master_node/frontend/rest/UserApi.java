@@ -40,7 +40,7 @@ public class UserApi {
             List<Channel> channelList = cur.getChannels();
             cur.setChannels(null);
             for (Channel i : channelList)
-                Sharer.send(i.getHost(), new RefreshUserTokenMessage(cur));
+                Sharer.send(i.getDbIndex(), new RefreshUserTokenMessage(cur));
         }
         else
             userService.add(user);

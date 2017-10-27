@@ -42,14 +42,14 @@ public class ChannelApi extends JsonFrontend {
     @POST
     @Secured(CommonUser.Role.USER)
     public Response create(Channel channel, @Context SecurityContext ctx) throws IOException {
-        String host = Sharer.pickDB();
-        channel.setHost(host);
+        Long dbIndex = Sharer.pickDB();
+        channel.setDbIndex(dbIndex);
 
         long userId = Long.parseLong(ctx.getUserPrincipal().getName());
         channelService.create(channel, userId);
         channel = channelService.getCur(channel);
 
-        Sharer.send(host, new CreateChannelMessage(channel, userService.get(userId)));
+        Sharer.send(dbIndex, new CreateChannelMessage(channel, userService.get(userId)));
 
         return Response.ok().build();
     }
@@ -63,7 +63,7 @@ public class ChannelApi extends JsonFrontend {
         long userId = Long.parseLong(ctx.getUserPrincipal().getName());
         channelService.addMember(channelId, userId);
 
-        Sharer.send(channel.getHost(), new AddMemberMessage(channelId, userService.get(userId)));
+        Sharer.send(channel.getDbIndex(), new AddMemberMessage(channelId, userService.get(userId)));
 
         return Response.ok().build();
     }
@@ -76,8 +76,6 @@ public class ChannelApi extends JsonFrontend {
 
         long userId = Long.parseLong(ctx.getUserPrincipal().getName());
         channelService.expelMember(channelId, userId);
-
-        Sharer.send(channel.getHost(), new ExpelMemberMessage(channel.getId(), userId));
 
         return Response.ok().build();
     }

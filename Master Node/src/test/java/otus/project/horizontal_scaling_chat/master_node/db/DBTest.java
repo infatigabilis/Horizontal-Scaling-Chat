@@ -11,6 +11,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import otus.project.horizontal_scaling_chat.master_node.beans.BeanConfig;
 import otus.project.horizontal_scaling_chat.master_node.db.dataset.User;
+import otus.project.horizontal_scaling_chat.master_node.db.service.DbIndexService;
 import otus.project.horizontal_scaling_chat.master_node.db.service.UserService;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.io.IOException;
 public class DBTest {
     @Autowired private DBService dbService;
     @Autowired private UserService userService;
+    @Autowired private DbIndexService dbIndexService;
 
     protected User user1;
     protected User user2;
@@ -48,6 +50,11 @@ public class DBTest {
             session.delete("clear_db");
             session.commit();
         }
+    }
+
+    protected void createDbIndexes() {
+        dbIndexService.insert(1, "h1");
+        dbIndexService.insert(2, "h2");
     }
 
     @Test

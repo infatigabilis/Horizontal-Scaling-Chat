@@ -24,6 +24,7 @@
     <mappers>
         <mapper resource="mybatis/mapper/channel.xml"/>
         <mapper resource="mybatis/mapper/user.xml"/>
+        <mapper resource="mybatis/mapper/db_index.xml"/>
 
         <mapper resource="mybatis/result_map/result_map.xml"/>
     </mappers>

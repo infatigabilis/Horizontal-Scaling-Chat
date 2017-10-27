@@ -16,7 +16,7 @@
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="org.postgresql.Driver"/>
-                <property name="url" value="jdbc:postgresql://localhost:5432/chat_master"/>
+                <property name="url" value="jdbc:postgresql://localhost:5432/test"/>
                 <property name="username" value="homestead"/>
                 <property name="password" value="secret"/>
             </dataSource>
@@ -25,6 +25,7 @@
     <mappers>
         <mapper resource="mybatis/mapper/channel.xml"/>
         <mapper resource="mybatis/mapper/user.xml"/>
+        <mapper resource="mybatis/mapper/db_index.xml"/>
 
         <mapper resource="mybatis/result_map/result_map.xml"/>
 

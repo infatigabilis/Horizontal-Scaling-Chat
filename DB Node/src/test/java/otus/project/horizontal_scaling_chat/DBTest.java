@@ -36,8 +36,8 @@ public class DBTest {
     }
 
     protected void addUsers() {
-        user1 = new User("1", "google", "login1", "token1");
-        user2 = new User("2", "vk", "login2", "token2");
+        user1 = new User(1, "1", "google", "login1", "token1");
+        user2 = new User(2, "2", "vk", "login2", "token2");
         userService.add(user1);
         userService.add(user2);
         user1 = userService.get(user1.getSourceId(), user1.getAuthSource());

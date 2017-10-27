@@ -10,7 +10,7 @@
           u.token as u_token,
           c.id as c_id,
           c.name as c_name,
-          c.host as c_host
+          c.db_index as c_db_index
         FROM users u
         LEFT JOIN user_channel uc ON u.id=uc.user_id
         LEFT JOIN channels c ON c.id=uc.channel_id
@@ -30,7 +30,7 @@
           u.token as u_token,
           c.id as c_id,
           c.name as c_name,
-          c.host as c_host
+          c.db_index as c_db_index
         FROM users u
         LEFT JOIN user_channel uc ON u.id=uc.user_id
         LEFT JOIN channels c ON c.id=uc.channel_id

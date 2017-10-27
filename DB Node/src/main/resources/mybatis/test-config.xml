@@ -17,7 +17,7 @@
             <transactionManager type="JDBC"/>
             <dataSource type="POOLED">
                 <property name="driver" value="org.postgresql.Driver"/>
-                <property name="url" value="jdbc:postgresql://localhost:5432/chat_db"/>
+                <property name="url" value="jdbc:postgresql://localhost:5432/testing_test"/>
                 <property name="username" value="homestead"/>
                 <property name="password" value="secret"/>
             </dataSource>

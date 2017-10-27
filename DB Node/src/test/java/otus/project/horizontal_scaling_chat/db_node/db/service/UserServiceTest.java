@@ -21,19 +21,19 @@ public class UserServiceTest extends DBTest {
 
     @Test
     public void get() {
-        userService.add(new User("1", "google", "login", "token"));
+        userService.add(new User(1, "1", "google", "login", "token"));
         assertTrue(userService.get("1", "google") != null);
     }
 
     @Test
     public void getByToken() {
-        userService.add(new User("1", "google", "login", "token"));
+        userService.add(new User(1, "1", "google", "login", "token"));
         assertTrue(userService.get("token").get() != null);
     }
 
     @Test
     public void add() {
-        userService.add(new User("1", "google", "login", "token"));
+        userService.add(new User(1, "1", "google", "login", "token"));
         User user = (User) userService.get("token").get();
         assertTrue(user != null);
 

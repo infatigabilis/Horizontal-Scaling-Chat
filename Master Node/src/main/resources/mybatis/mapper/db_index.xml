@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="mybatis">
+
+    <insert id="insert" parameterType="map">
+        INSERT INTO db_index (id, serving_host) VALUES (#{id}, #{host})
+    </insert>
+
+    <update id="update" parameterType="map">
+        UPDATE db_index SET serving_host=#{host} WHERE id=#{id}
+    </update>
+
+    <select id="select" parameterType="long" resultType="Long">
+        SELECT id FROM db_index WHERE id=#{value}
+    </select>
+
+</mapper>

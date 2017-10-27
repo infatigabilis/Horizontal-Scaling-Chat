@@ -8,17 +8,24 @@ import java.util.List;
 
 public class Channel extends CommonChannel {
     @Expose private String host;
+    private long dbIndex;
     private List<User> members = new ArrayList<>();
 
     public Channel() {
     }
 
-    public Channel(String name, String host) {
+    public Channel(String name, long dbIndex) {
         this.setName(name);
-        this.host = host;
+        this.dbIndex = dbIndex;
     }
 
 
+    public long getDbIndex() {
+        return dbIndex;
+    }
+    public void setDbIndex(long dbIndex) {
+        this.dbIndex = dbIndex;
+    }
     public String getHost() {
         return host;
     }

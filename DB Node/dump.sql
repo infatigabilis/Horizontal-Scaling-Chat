@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 9.5.8
--- Dumped by pg_dump version 9.5.8
+-- Dumped from database version 9.5.5
+-- Dumped by pg_dump version 9.5.5
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -38,6 +38,7 @@ DROP SEQUENCE IF EXISTS public.messages_id_seq;
 DROP TABLE IF EXISTS public.messages;
 DROP SEQUENCE IF EXISTS public.channels_id_seq1;
 DROP TABLE IF EXISTS public.channels;
+DROP EXTENSION IF EXISTS plpgsql;
 DROP SCHEMA IF EXISTS public;
 --
 -- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
@@ -53,6 +54,20 @@ ALTER SCHEMA public OWNER TO postgres;
 --
 
 COMMENT ON SCHEMA public IS 'standard public schema';
+
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 
 
 SET search_path = public, pg_catalog;
@@ -101,7 +116,7 @@ ALTER SEQUENCE channels_id_seq1 OWNED BY channels.id;
 CREATE TABLE messages (
     id bigint NOT NULL,
     text text DEFAULT now() NOT NULL,
-    created_at timestamp without time zone,
+    created_at timestamp without time zone DEFAULT now(),
     channel_id bigint,
     user_id bigint
 );
@@ -204,6 +219,7 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq1'::regc
 --
 
 COPY channels (id, name) FROM stdin;
+4	New channel
 \.
 
 
@@ -219,6 +235,17 @@ SELECT pg_catalog.setval('channels_id_seq1', 9, true);
 --
 
 COPY messages (id, text, created_at, channel_id, user_id) FROM stdin;
+2	Text	\N	4	5
+3	Text	\N	4	5
+4	Text	\N	4	5
+5	Text	\N	4	5
+6	Text	\N	4	5
+7	Text	\N	4	5
+8	Text	\N	4	5
+9	Text	\N	4	5
+10	Text	\N	4	5
+11	Text	\N	4	5
+12	Text	\N	4	5
 \.
 
 
@@ -226,7 +253,7 @@ COPY messages (id, text, created_at, channel_id, user_id) FROM stdin;
 -- Name: messages_id_seq; Type: SEQUENCE SET; Schema: public; Owner: homestead
 --
 
-SELECT pg_catalog.setval('messages_id_seq', 1, true);
+SELECT pg_catalog.setval('messages_id_seq', 12, true);
 
 
 --
@@ -234,6 +261,7 @@ SELECT pg_catalog.setval('messages_id_seq', 1, true);
 --
 
 COPY user_channel (user_id, channel_id) FROM stdin;
+5	4
 \.
 
 
@@ -242,6 +270,8 @@ COPY user_channel (user_id, channel_id) FROM stdin;
 --
 
 COPY users (id, source_id, auth_source, login, token) FROM stdin;
+5	100984083937515165319	google	Данил Иванов	ya29.GlzvBC4js1CZTFiW0yldxDOFKQMd0vkiB-BsfboN8f_ESJvQsShzLxSFEe3VDdUuyMTlNp4O1rgtHauUwfkgO-LXPUEpn9ayZddwMw5h250qYsDccgL1h_bYiguPOg
+1	1	google	login1	token1
 \.
 
 

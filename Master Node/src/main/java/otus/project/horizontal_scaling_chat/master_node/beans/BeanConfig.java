@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import otus.project.horizontal_scaling_chat.master_node.db.DBService;
 import otus.project.horizontal_scaling_chat.master_node.db.service.ChannelService;
+import otus.project.horizontal_scaling_chat.master_node.db.service.DbIndexService;
 import otus.project.horizontal_scaling_chat.master_node.db.service.UserService;
 
 import java.io.IOException;
@@ -28,5 +29,10 @@ public class BeanConfig {
     @Bean
     public UserService userService() {
         return new UserService(dbService());
+    }
+
+    @Bean
+    public DbIndexService dbIndexService() {
+        return new DbIndexService(dbService());
     }
 }

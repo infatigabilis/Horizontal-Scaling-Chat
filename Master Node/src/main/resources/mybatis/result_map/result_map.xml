@@ -6,6 +6,7 @@
         <result property="id" column="c_id"/>
         <result property="name" column="c_name"/>
         <result property="host" column="c_host"/>
+        <result property="dbIndex" column="c_db_index"/>
         <association property="members" resultMap="user"/>
     </resultMap>
 

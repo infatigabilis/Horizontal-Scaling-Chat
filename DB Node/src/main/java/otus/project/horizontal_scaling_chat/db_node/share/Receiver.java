@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import otus.project.horizontal_scaling_chat.db_node.Main;
 import otus.project.horizontal_scaling_chat.db_node.db.service.ChannelService;
 import otus.project.horizontal_scaling_chat.db_node.db.service.UserService;
 import otus.project.horizontal_scaling_chat.share.TransmittedData;
@@ -19,6 +20,7 @@ import java.nio.channels.SocketChannel;
 
 public class Receiver {
     private static final int CAPACITY = 516;
+    private static final String MESSAGES_SEPARATOR = "\n\n";
 
     private StringBuilder readBuilder = new StringBuilder();
 
@@ -39,6 +41,9 @@ public class Receiver {
         SocketChannel channel = SocketChannel.open();
         channel.connect(new InetSocketAddress(sharerHostname, sharerPort));
 
+        String info = getSelfInfo();
+        channel.write(ByteBuffer.wrap(info.getBytes()));
+
         while(true) {
             ByteBuffer buffer = ByteBuffer.allocate(CAPACITY);
             int read = channel.read(buffer);
@@ -56,5 +61,9 @@ public class Receiver {
                 }
             }
         }
+    }
+
+    public String getSelfInfo() {
+        return Main.dbIndex + ":" + Main.port + MESSAGES_SEPARATOR;
     }
 }

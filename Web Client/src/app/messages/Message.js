@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import List, { ListItem, ListItemIcon, ListItemText } from 'material-ui/List';
+import { ListItem, ListItemText } from 'material-ui/List';
 
 const styles = {
   text: {
@@ -14,7 +14,7 @@ export default class MenuHolder extends Component {
         button
         divider
       >
-        <ListItemText style={styles.text} primary="Long message text" />
+        <ListItemText style={styles.text} primary={<a><b>{this.props.data.sender.login}:</b> {this.props.data.text}</a>} />
       </ListItem>
     )
   }

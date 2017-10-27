@@ -11,8 +11,9 @@ public class User extends CommonUser {
     public User() {
     }
 
-    public User(String sourceId, String authSource, String login, String token) {
+    public User(long id, String sourceId, String authSource, String login, String token) {
         super(sourceId, authSource, login, token);
+        setId(id);
     }
 
     public List<Channel> getChannels() {

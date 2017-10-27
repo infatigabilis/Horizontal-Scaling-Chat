@@ -5,6 +5,8 @@ import Button from 'material-ui/Button';
 import Typography from 'material-ui/Typography';
 import Menu, { MenuItem } from 'material-ui/Menu';
 
+import Utils from '../Utils';
+
 const styles = {
   paper: {
     margin: 0,
@@ -17,6 +19,7 @@ const styles = {
 
 export default class Profile extends Component {
   state = {
+    name: "",
     anchorEl: null,
     open: false,
   };
@@ -26,16 +29,33 @@ export default class Profile extends Component {
   };
 
   handleRequestClose = () => {
-    this.setState({ open: false });
+    this.setState({open: false});
+  };
+
+  handleChannelLeave = (id) => {
+    fetch(Utils.getMasterHost() + 'api/channels/' + id, {
+      method: "DELETE",
+      headers: {
+        "Authorization": "Bearer " + Utils.getAuthToken()
+      }
+    })
+      .then(res => {
+        this.fetch();
+      })
   };
 
   render() {
     return (
       <AppBar style={styles.paper} position="static">
         <Toolbar>
+          <Button raised color="accent" onClick={() => this.handleChannelLeave(this.props.channelId)} >
+            Leave
+          </Button>
+
           <Typography type="title" color="inherit" style={styles.text}>
-            Channel Name
+            {this.props.name}
           </Typography>
+
           <Button
             color="contrast"
             aria-owns={this.state.open ? 'simple-menu' : null}

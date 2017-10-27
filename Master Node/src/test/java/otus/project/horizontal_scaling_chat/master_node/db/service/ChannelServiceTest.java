@@ -19,6 +19,7 @@ public class ChannelServiceTest extends DBTest {
     @Before
     public void setup() {
         addUsers();
+        createDbIndexes();
     }
 
     @After
@@ -30,8 +31,8 @@ public class ChannelServiceTest extends DBTest {
     public void get() {
         assertEquals(0, channelService.get(0).size());
 
-        channelService.create(new Channel("c1", "h1"), user1.getId());
-        channelService.create(new Channel("c2", "h2"), user1.getId());
+        channelService.create(new Channel("c1", 1), user1.getId());
+        channelService.create(new Channel("c2", 2), user1.getId());
 
         List<Channel> list = channelService.get(0);
         assertEquals(2, list.size());
@@ -42,8 +43,8 @@ public class ChannelServiceTest extends DBTest {
 
     @Test
     public void getByUser() {
-        channelService.create(new Channel("c1", "h1"), user1.getId());
-        channelService.create(new Channel("c2", "h2"), user1.getId());
+        channelService.create(new Channel("c1", 1), user1.getId());
+        channelService.create(new Channel("c2", 2), user1.getId());
 
         List<Channel> list = channelService.getByUser(user1.getId());
         assertEquals(2, list.size());
@@ -53,7 +54,7 @@ public class ChannelServiceTest extends DBTest {
 
     @Test
     public void addMember() {
-        Channel channel = new Channel("c1", "h1");
+        Channel channel = new Channel("c1", 1);
         channelService.create(channel, user2.getId());
         channel = channelService.getCur(channel);
         channelService.addMember(channel.getId(), user1.getId());
@@ -63,7 +64,7 @@ public class ChannelServiceTest extends DBTest {
 
     @Test
     public void expelMember() {
-        Channel channel = new Channel("c1", "h1");
+        Channel channel = new Channel("c1", 1);
         channelService.create(channel, user2.getId());
         channel = channelService.getCur(channel);
         channelService.expelMember(channel.getId(), user2.getId());
