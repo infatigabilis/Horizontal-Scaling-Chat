@@ -219,7 +219,6 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq1'::regc
 --
 
 COPY channels (id, name) FROM stdin;
-4	New channel
 \.
 
 
@@ -227,7 +226,7 @@ COPY channels (id, name) FROM stdin;
 -- Name: channels_id_seq1; Type: SEQUENCE SET; Schema: public; Owner: homestead
 --
 
-SELECT pg_catalog.setval('channels_id_seq1', 9, true);
+SELECT pg_catalog.setval('channels_id_seq1', 1, false);
 
 
 --
@@ -235,17 +234,6 @@ SELECT pg_catalog.setval('channels_id_seq1', 9, true);
 --
 
 COPY messages (id, text, created_at, channel_id, user_id) FROM stdin;
-2	Text	\N	4	5
-3	Text	\N	4	5
-4	Text	\N	4	5
-5	Text	\N	4	5
-6	Text	\N	4	5
-7	Text	\N	4	5
-8	Text	\N	4	5
-9	Text	\N	4	5
-10	Text	\N	4	5
-11	Text	\N	4	5
-12	Text	\N	4	5
 \.
 
 
@@ -253,7 +241,7 @@ COPY messages (id, text, created_at, channel_id, user_id) FROM stdin;
 -- Name: messages_id_seq; Type: SEQUENCE SET; Schema: public; Owner: homestead
 --
 
-SELECT pg_catalog.setval('messages_id_seq', 12, true);
+SELECT pg_catalog.setval('messages_id_seq', 1, false);
 
 
 --
@@ -261,7 +249,6 @@ SELECT pg_catalog.setval('messages_id_seq', 12, true);
 --
 
 COPY user_channel (user_id, channel_id) FROM stdin;
-5	4
 \.
 
 
@@ -270,8 +257,6 @@ COPY user_channel (user_id, channel_id) FROM stdin;
 --
 
 COPY users (id, source_id, auth_source, login, token) FROM stdin;
-5	100984083937515165319	google	Данил Иванов	ya29.GlzvBC4js1CZTFiW0yldxDOFKQMd0vkiB-BsfboN8f_ESJvQsShzLxSFEe3VDdUuyMTlNp4O1rgtHauUwfkgO-LXPUEpn9ayZddwMw5h250qYsDccgL1h_bYiguPOg
-1	1	google	login1	token1
 \.
 
 
@@ -279,7 +264,7 @@ COPY users (id, source_id, auth_source, login, token) FROM stdin;
 -- Name: users_id_seq1; Type: SEQUENCE SET; Schema: public; Owner: homestead
 --
 
-SELECT pg_catalog.setval('users_id_seq1', 17, true);
+SELECT pg_catalog.setval('users_id_seq1', 1, false);
 
 
 --

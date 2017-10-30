@@ -1,23 +1,24 @@
 package otus.project.horizontal_scaling_chat.db_node.share;
 
-import com.google.gson.Gson;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import otus.project.horizontal_scaling_chat.db_node.Main;
+import com.sun.org.apache.regexp.internal.RE;
 import otus.project.horizontal_scaling_chat.db_node.db.service.ChannelService;
 import otus.project.horizontal_scaling_chat.db_node.db.service.UserService;
-import otus.project.horizontal_scaling_chat.share.DbNodeInit;
+import otus.project.horizontal_scaling_chat.share.MasterEndpoint;
 import otus.project.horizontal_scaling_chat.share.TransmittedData;
+import otus.project.horizontal_scaling_chat.share.init.DbNodeInit;
 import otus.project.horizontal_scaling_chat.share.message.Message;
 import otus.project.horizontal_scaling_chat.share.message.channel.ChannelMessage;
-import otus.project.horizontal_scaling_chat.share.message.channel.CreateChannelMessage;
 import otus.project.horizontal_scaling_chat.share.message.user.UserMessage;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
+import java.nio.channels.SelectionKey;
+import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
+import java.util.Iterator;
+import java.util.Properties;
 
 public class Receiver {
     private static final int CAPACITY = 516;
@@ -27,45 +28,77 @@ public class Receiver {
 
     private final ChannelService channelService;
     private final UserService userService;
-    private final String sharerHostname;
-    private final int sharerPort;
+    private final MasterEndpoint[] masterEndpoints;
 
-    public Receiver(ChannelService channelService, UserService userService, String sharerHostname, int sharerPort) {
+    public Receiver(ChannelService channelService, UserService userService, MasterEndpoint[] masterEndpoints) {
         this.channelService = channelService;
         this.userService = userService;
-        this.sharerHostname = sharerHostname;
-        this.sharerPort = sharerPort;
+        this.masterEndpoints = masterEndpoints;
     }
 
     @SuppressWarnings("InfiniteLoopStatement")
     public void run() throws IOException {
-        SocketChannel channel = SocketChannel.open();
-        channel.connect(new InetSocketAddress(sharerHostname, sharerPort));
-
+        Selector selector = Selector.open();
         String info = getSelfInfo();
-        channel.write(ByteBuffer.wrap(info.getBytes()));
 
-        while(true) {
-            ByteBuffer buffer = ByteBuffer.allocate(CAPACITY);
-            int read = channel.read(buffer);
-            if (read != -1) {
-                String part = new String(buffer.array()).trim();
-                readBuilder.append(part);
+        for (MasterEndpoint endpoint : masterEndpoints) {
+            SocketChannel channel = SocketChannel.open();
+            channel.connect(new InetSocketAddress(endpoint.getHost(), endpoint.getPort()));
 
-                if (part.length() != read) {
-                    Message msg = (Message) TransmittedData.fromJson(readBuilder.toString());
+            channel.write(ByteBuffer.wrap(info.getBytes()));
 
-                    if (msg instanceof ChannelMessage) ((ChannelMessage) msg).handleChannel(channelService);
-                    else if (msg instanceof UserMessage) ((UserMessage) msg).handleUser(userService);
+            channel.configureBlocking(false);
+            channel.register(selector, SelectionKey.OP_READ);
+        }
 
-                    readBuilder = new StringBuilder();
+        while (true) {
+            selector.select();
+            Iterator<SelectionKey> iterator = selector.selectedKeys().iterator();
+            while (iterator.hasNext()) {
+                SelectionKey key = iterator.next();
+
+                try {
+                    if (key.isReadable()) read((SocketChannel) key.channel());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    iterator.remove();
                 }
             }
         }
     }
 
+    private void read(SocketChannel channel) throws IOException {
+        ByteBuffer buffer = ByteBuffer.allocate(CAPACITY);
+        int read = channel.read(buffer);
+        if (read != -1) {
+            String part = new String(buffer.array()).trim();
+            readBuilder.append(part);
+
+            if (part.length() != read) {
+                Message msg = (Message) TransmittedData.fromJson(readBuilder.toString());
+
+                if (msg instanceof ChannelMessage) ((ChannelMessage) msg).handleChannel(channelService);
+                else if (msg instanceof UserMessage) ((UserMessage) msg).handleUser(userService);
+
+                readBuilder = new StringBuilder();
+            }
+        }
+    }
+
     private String getSelfInfo() {
-        DbNodeInit data = new DbNodeInit(Main.dbIndex, Main.port);
-        return TransmittedData.toJson(data) + MESSAGES_SEPARATOR;
+        try(InputStream input = Receiver.class.getClassLoader().getResourceAsStream("application.properties")) {
+            Properties prop = new Properties();
+            prop.load(input);
+
+            long dbIndex = Long.parseLong(prop.getProperty("db_index"));
+            int frontPort = Integer.parseInt(prop.getProperty("front_port"));
+
+            DbNodeInit data = new DbNodeInit(dbIndex, frontPort);
+            return TransmittedData.toJson(data) + MESSAGES_SEPARATOR;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
     }
 }

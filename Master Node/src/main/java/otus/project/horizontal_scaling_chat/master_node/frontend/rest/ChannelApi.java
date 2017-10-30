@@ -10,6 +10,9 @@ import otus.project.horizontal_scaling_chat.master_node.db.service.UserService;
 import otus.project.horizontal_scaling_chat.master_node.frontend.JsonFrontend;
 import otus.project.horizontal_scaling_chat.master_node.db.service.ChannelService;
 import otus.project.horizontal_scaling_chat.master_node.share.Sharer;
+import otus.project.horizontal_scaling_chat.master_node.share.message.MasterChannelAddMemberMessage;
+import otus.project.horizontal_scaling_chat.master_node.share.message.MasterChannelCreateMessage;
+import otus.project.horizontal_scaling_chat.master_node.share.message.MasterChannelExpelMemberMessage;
 import otus.project.horizontal_scaling_chat.share.message.channel.AddMemberMessage;
 import otus.project.horizontal_scaling_chat.share.message.channel.CreateChannelMessage;
 import otus.project.horizontal_scaling_chat.share.message.channel.ExpelMemberMessage;
@@ -58,6 +61,7 @@ public class ChannelApi extends JsonFrontend {
         channelService.create(channel, userId);
         channel = channelService.getCur(channel);
 
+        Sharer.sendToMasters(new MasterChannelCreateMessage(channel, userId));
         Sharer.send(dbIndex, new CreateChannelMessage(channel, userService.get(userId)));
 
         return Response.ok().build();
@@ -72,6 +76,7 @@ public class ChannelApi extends JsonFrontend {
         long userId = Long.parseLong(ctx.getUserPrincipal().getName());
         channelService.addMember(channelId, userId);
 
+        Sharer.sendToMasters(new MasterChannelAddMemberMessage(channelId, userId));
         Sharer.send(channel.getDbIndex(), new AddMemberMessage(channelId, userService.get(userId)));
 
         return Response.ok().build();
@@ -85,6 +90,8 @@ public class ChannelApi extends JsonFrontend {
 
         long userId = Long.parseLong(ctx.getUserPrincipal().getName());
         channelService.expelMember(channelId, userId);
+
+        Sharer.sendToMasters(new MasterChannelExpelMemberMessage(channelId, userId));
 
         return Response.ok().build();
     }

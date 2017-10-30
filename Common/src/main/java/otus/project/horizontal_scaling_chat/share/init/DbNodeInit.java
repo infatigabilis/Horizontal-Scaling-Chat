@@ -1,6 +1,6 @@
-package otus.project.horizontal_scaling_chat.share;
+package otus.project.horizontal_scaling_chat.share.init;
 
-public class DbNodeInit extends TransmittedData {
+public class DbNodeInit extends NodeInit {
     private final long dbIndex;
     private final int frontPort;
 

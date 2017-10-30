@@ -184,10 +184,6 @@ ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq1'::regc
 --
 
 COPY channels (id, name, db_index) FROM stdin;
-1	Channel 1	1
-2	Channel 2	1
-4	New channel	1
-3	Channel 3	1
 \.
 
 
@@ -195,7 +191,7 @@ COPY channels (id, name, db_index) FROM stdin;
 -- Name: channels_id_seq1; Type: SEQUENCE SET; Schema: public; Owner: homestead
 --
 
-SELECT pg_catalog.setval('channels_id_seq1', 4, true);
+SELECT pg_catalog.setval('channels_id_seq1', 1, false);
 
 
 --
@@ -203,7 +199,6 @@ SELECT pg_catalog.setval('channels_id_seq1', 4, true);
 --
 
 COPY db_index (id, serving_host) FROM stdin;
-1	localhost:9090
 \.
 
 
@@ -212,15 +207,6 @@ COPY db_index (id, serving_host) FROM stdin;
 --
 
 COPY user_channel (user_id, channel_id) FROM stdin;
-1	1
-1	2
-2	1
-3	1
-3	2
-3	3
-4	1
-4	3
-5	4
 \.
 
 
@@ -229,11 +215,6 @@ COPY user_channel (user_id, channel_id) FROM stdin;
 --
 
 COPY users (id, source_id, auth_source, login, token) FROM stdin;
-1	1	google	login1	token1
-2	1	vk	login2	token2
-3	2	vk	login3	token3
-4	100	google	login4	token4
-5	100984083937515165319	google	Данил Иванов	ya29.GlzvBC4js1CZTFiW0yldxDOFKQMd0vkiB-BsfboN8f_ESJvQsShzLxSFEe3VDdUuyMTlNp4O1rgtHauUwfkgO-LXPUEpn9ayZddwMw5h250qYsDccgL1h_bYiguPOg
 \.
 
 
@@ -241,7 +222,7 @@ COPY users (id, source_id, auth_source, login, token) FROM stdin;
 -- Name: users_id_seq1; Type: SEQUENCE SET; Schema: public; Owner: homestead
 --
 
-SELECT pg_catalog.setval('users_id_seq1', 5, true);
+SELECT pg_catalog.setval('users_id_seq1', 1, false);
 
 
 --
