@@ -7,6 +7,7 @@ import org.json.simple.parser.ParseException;
 import otus.project.horizontal_scaling_chat.db_node.Main;
 import otus.project.horizontal_scaling_chat.db_node.db.service.ChannelService;
 import otus.project.horizontal_scaling_chat.db_node.db.service.UserService;
+import otus.project.horizontal_scaling_chat.share.DbNodeInit;
 import otus.project.horizontal_scaling_chat.share.TransmittedData;
 import otus.project.horizontal_scaling_chat.share.message.Message;
 import otus.project.horizontal_scaling_chat.share.message.channel.ChannelMessage;
@@ -63,7 +64,8 @@ public class Receiver {
         }
     }
 
-    public String getSelfInfo() {
-        return Main.dbIndex + ":" + Main.port + MESSAGES_SEPARATOR;
+    private String getSelfInfo() {
+        DbNodeInit data = new DbNodeInit(Main.dbIndex, Main.port);
+        return TransmittedData.toJson(data) + MESSAGES_SEPARATOR;
     }
 }

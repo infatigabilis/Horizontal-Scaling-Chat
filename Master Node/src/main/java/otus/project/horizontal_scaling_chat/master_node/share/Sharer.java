@@ -3,7 +3,11 @@ package otus.project.horizontal_scaling_chat.master_node.share;
 import com.google.gson.Gson;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import otus.project.horizontal_scaling_chat.master_node.db.service.ChannelService;
 import otus.project.horizontal_scaling_chat.master_node.db.service.DbIndexService;
+import otus.project.horizontal_scaling_chat.master_node.share.message.MasterMessage;
+import otus.project.horizontal_scaling_chat.share.DbNodeInit;
+import otus.project.horizontal_scaling_chat.share.TransmittedData;
 import otus.project.horizontal_scaling_chat.share.message.Message;
 
 import java.io.IOException;
@@ -22,6 +26,7 @@ public class Sharer {
 
     private final int port;
     private final DbIndexService dbIndexService;
+    private final ChannelService channelService;
 
     private static Queue<Long> dbIndexes = new LinkedList<>();
     private static Map<String, SocketChannel> dbNodes = new HashMap<>();
@@ -29,9 +34,10 @@ public class Sharer {
 
     private StringBuilder readBuilder = new StringBuilder();
 
-    public Sharer(int port, DbIndexService dbIndexService) {
+    public Sharer(int port, DbIndexService dbIndexService, ChannelService channelService) {
         this.port = port;
         this.dbIndexService = dbIndexService;
+        this.channelService = channelService;
     }
 
     @SuppressWarnings("InfiniteLoopStatement")
@@ -86,7 +92,8 @@ public class Sharer {
             readBuilder.append(part);
 
             if (part.length() != read) {
-                readInit(channel);
+                parseMessage(readBuilder.toString(), channel);
+                readBuilder = new StringBuilder();
             }
         } else {
             key.cancel();
@@ -96,19 +103,23 @@ public class Sharer {
         }
     }
 
-    private void readInit(SocketChannel channel) throws IOException {
-        String[] data = readBuilder.toString().trim().split(":");
-        readBuilder = new StringBuilder();
+    private void parseMessage(String msg, SocketChannel channel) throws IOException {
+        TransmittedData data = TransmittedData.fromJson(msg);
+        if (data instanceof DbNodeInit) handleInit((DbNodeInit) data, channel);
+        else if (data instanceof MasterMessage) handleMasterMessage((MasterMessage) data);
+    }
 
-        long dbIndex = Long.parseLong(data[0]);
+    private void handleMasterMessage(MasterMessage msg) {
+        msg.masterHandle(channelService);
+    }
 
-        dbIndexes.add(dbIndex);
-        dbIndexToSocketAddressMap.put(dbIndex, channel.getRemoteAddress().toString());
+    private void handleInit(DbNodeInit data, SocketChannel channel) throws IOException {
+        dbIndexes.add(data.getDbIndex());
+        dbIndexToSocketAddressMap.put(data.getDbIndex(), channel.getRemoteAddress().toString());
 
         String host = channel.getRemoteAddress().toString().substring(1).split(":")[0];
-        String port = data[1];
 
-        dbIndexService.save(dbIndex, host + ":" + port);
+        dbIndexService.save(data.getDbIndex(), host + ":" + data.getFrontPort());
     }
 
     public static void send(long dbIndex, Message message) throws IOException {

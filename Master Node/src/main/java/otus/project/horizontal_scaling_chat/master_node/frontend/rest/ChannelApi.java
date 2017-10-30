@@ -39,6 +39,15 @@ public class ChannelApi extends JsonFrontend {
         return respond(channelService.getByUser(Long.parseLong(ctx.getUserPrincipal().getName())));
     }
 
+    @GET @Path("{channel}/members")
+    @Secured(CommonUser.Role.USER)
+    public String getChannelMembers(@PathParam("channel") long channelId, @Context SecurityContext ctx) {
+        Channel channel = channelService.getById(channelId).orElseThrow(() ->
+                new DBEnitytNotFoundException(Channel.class, channelId));
+
+        return respond(channel.getMembers());
+    }
+
     @POST
     @Secured(CommonUser.Role.USER)
     public Response create(Channel channel, @Context SecurityContext ctx) throws IOException {

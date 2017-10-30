@@ -28,6 +28,9 @@ export default class MenuHolder extends React.Component {
   };
 
   componentDidMount() {
+    Mediator.set({
+      messageFetch: this.fetch
+    });
     this.fetch()
   }
 
@@ -48,18 +51,6 @@ export default class MenuHolder extends React.Component {
       })
   };
 
-  handleChannelLeave = (id) => {
-    fetch(Utils.getMasterHost() + 'api/channels/' + id, {
-      method: "DELETE",
-      headers: {
-        "Authorization": "Bearer " + Utils.getAuthToken()
-      }
-    })
-      .then(res => {
-        this.fetch();
-      })
-  };
-
   render() {
     const channels = this.state.channels.map(channel => {
       return (
@@ -71,7 +62,6 @@ export default class MenuHolder extends React.Component {
           button
           divider
         >
-          {/*<a style={styles.listText}>{channel.name}</a>*/}
           <ListItemText
             primary={
               <Typography align="left" style={styles.listText} color="inherit" type="title" component="h3">

@@ -28,6 +28,10 @@
     <insert id="channel_create" parameterType="Channel">
         INSERT INTO channels (name, db_index) VALUES(#{name}, #{dbIndex})
     </insert>
+
+    <insert id="channel_create_with_id" parameterType="Channel">
+        INSERT INTO channels (id, name, db_index) VALUES(#{id}, #{name}, #{dbIndex})
+    </insert>
     
     <select id="channel_get_cur" parameterType="Channel" resultType="Channel" resultMap="channel">
         SELECT

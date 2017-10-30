@@ -1,6 +1,7 @@
 package otus.project.horizontal_scaling_chat.master_node.listener;
 
 import otus.project.horizontal_scaling_chat.beans.BeanHelper;
+import otus.project.horizontal_scaling_chat.master_node.db.service.ChannelService;
 import otus.project.horizontal_scaling_chat.master_node.db.service.DbIndexService;
 import otus.project.horizontal_scaling_chat.master_node.share.Sharer;
 
@@ -15,7 +16,8 @@ public class ShareListener implements ServletContextListener {
     public void contextInitialized(ServletContextEvent servletContextEvent) {
         Executors.newSingleThreadExecutor().submit(() -> {
             try {
-                new Sharer(7070, BeanHelper.getBean(DbIndexService.class)).start();
+                new Sharer(7070, BeanHelper.getBean(DbIndexService.class), BeanHelper.getBean(ChannelService.class))
+                        .start();
             } catch (Exception e) {
                 e.printStackTrace();
             }

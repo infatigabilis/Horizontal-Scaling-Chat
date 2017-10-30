@@ -50,15 +50,25 @@ public class ChannelService {
 
     public Channel create(Channel channel, long creatorId) {
         try(SqlSession session = dbService.openSession()) {
-            session.insert("channel_create", channel);
-            session.commit();
+            if(channel.getId() != 0) {
+                session.insert("channel_create_with_id");
+                addMember(channel.getId(), creatorId);
+                session.commit();
 
-            Channel cur = getCur(channel);
-            addMember(cur.getId(), creatorId);
-            session.commit();
-            logger.info("Created channel " + channel + " with creator with id " + creatorId);
+                logger.info("Created channel(with id) " + channel + " with creator with id " + creatorId);
+                return channel;
+            }
+            else {
+                session.insert("channel_create", channel);
+                session.commit();
 
-            return cur;
+                Channel cur = getCur(channel);
+                addMember(cur.getId(), creatorId);
+                session.commit();
+
+                logger.info("Created channel " + channel + " with creator with id " + creatorId);
+                return cur;
+            }
         }
     }
 

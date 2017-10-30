@@ -2,14 +2,21 @@ import config from "../config"
 
 export default class Utils {
   static getAuthToken = () => {
-    return "ya29.GlzvBC4js1CZTFiW0yldxDOFKQMd0vkiB-BsfboN8f_ESJvQsShzLxSFEe3VDdUuyMTlNp4O1rgtHauUwfkgO-LXPUEpn9ayZddwMw5h250qYsDccgL1h_bYiguPOg";
+    if (localStorage.getItem("token") === null) Utils.auth();
+
+    return localStorage.getItem("token");
   };
+
+  static auth() {
+    const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?client_id=764305920855-mvd0tmc97rvpn2mmgvr5r4b1th1t13a7.apps.googleusercontent.com&redirect_uri=http://localhost:8080/api/auth&scope=https://www.googleapis.com/auth/plus.me&response_type=code';
+    window.location.href = authUrl;
+  }
 
   static getMasterHost = () => {
-    return "http://" + config.masters[0] + "/";
+    return "/";
+    // return "http://" + config.masters[0] + "/";
   };
 
-  // todo transient
   static transformDbHost(host) {
     return "http://" + host + "/";
   }
