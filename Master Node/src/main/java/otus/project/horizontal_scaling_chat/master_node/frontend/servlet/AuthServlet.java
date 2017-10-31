@@ -5,6 +5,7 @@ import otus.project.horizontal_scaling_chat.beans.BeanHelper;
 import otus.project.horizontal_scaling_chat.master_node.db.dataset.Channel;
 import otus.project.horizontal_scaling_chat.master_node.db.dataset.User;
 import otus.project.horizontal_scaling_chat.master_node.db.service.UserService;
+import otus.project.horizontal_scaling_chat.master_node.listener.ShareListener;
 import otus.project.horizontal_scaling_chat.master_node.share.Sharer;
 import otus.project.horizontal_scaling_chat.share.message.user.RefreshUserTokenMessage;
 
@@ -16,17 +17,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.QueryParam;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import java.util.Properties;
 
 @WebServlet(name = "AuthServlet", urlPatterns = "/api/auth")
 public class AuthServlet extends HttpServlet {
     private final UserService userService = BeanHelper.getBean(UserService.class);
+    private static int frontPort;
 
     //  https://accounts.google.com/o/oauth2/v2/auth?client_id=764305920855-mvd0tmc97rvpn2mmgvr5r4b1th1t13a7.apps.googleusercontent.com&redirect_uri=http://localhost:8080/api/auth&scope=https://www.googleapis.com/auth/plus.me&response_type=code
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -39,6 +39,8 @@ public class AuthServlet extends HttpServlet {
         if (cur != null) {
             cur.setToken(user.getToken());
             userService.refreshToken(cur);
+
+            Sharer.sendToMasters(new RefreshUserTokenMessage(cur));
 
             List<Channel> channelList = cur.getChannels();
             cur.setChannels(null);
@@ -61,7 +63,7 @@ public class AuthServlet extends HttpServlet {
         String urlParam =
                 "client_id=764305920855-mvd0tmc97rvpn2mmgvr5r4b1th1t13a7.apps.googleusercontent.com&" +
                         "client_secret=oMf2y5Wf4QBynRke8NoSnGvb&grant_type=authorization_code&" +
-                        "redirect_uri=http://localhost:8080/api/auth&" +
+                        "redirect_uri=http://localhost:" + getFrontPort() + "/api/auth&" +
                         "code=" + code;
 
         HttpsURLConnection con = (HttpsURLConnection) new URL(url).openConnection();
@@ -107,6 +109,22 @@ public class AuthServlet extends HttpServlet {
         GoogleProfile profile = new Gson().fromJson(response.toString(), GoogleProfile.class);
 
         return new User(profile.getId(), "google", profile.getDisplayName(), accessToken);
+    }
+
+    private int getFrontPort() {
+        if (frontPort == 0) {
+            try(InputStream input = ShareListener.class.getClassLoader().getResourceAsStream("application.properties")) {
+                Properties prop = new Properties();
+                prop.load(input);
+
+                frontPort = Integer.parseInt(prop.getProperty("front_port"));
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException();
+            }
+        }
+
+        return frontPort;
     }
 
     private class GoogleProfile {

@@ -5,6 +5,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import otus.project.horizontal_scaling_chat.master_node.db.service.ChannelService;
 import otus.project.horizontal_scaling_chat.master_node.db.service.DbIndexService;
+import otus.project.horizontal_scaling_chat.master_node.db.service.UserService;
 import otus.project.horizontal_scaling_chat.master_node.share.message.MasterMessage;
 import otus.project.horizontal_scaling_chat.share.MasterEndpoint;
 import otus.project.horizontal_scaling_chat.share.TransmittedData;
@@ -12,6 +13,7 @@ import otus.project.horizontal_scaling_chat.share.init.DbNodeInit;
 import otus.project.horizontal_scaling_chat.share.init.MasterNodeInit;
 import otus.project.horizontal_scaling_chat.share.init.NodeInit;
 import otus.project.horizontal_scaling_chat.share.message.Message;
+import otus.project.horizontal_scaling_chat.share.message.user.UserMessage;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -24,12 +26,13 @@ import java.util.*;
 
 public class Sharer {
     private static final Logger logger = LogManager.getLogger();
-    private static final int READING_CAPACITY = 128;
+    private static final int READING_CAPACITY = 1024;
     private static final String MESSAGES_SEPARATOR = "\n\n";
 
     private final int port;
     private final DbIndexService dbIndexService;
     private final ChannelService channelService;
+    private final UserService userService;
     private final MasterEndpoint[] masterEndpoints;
 
     private static Queue<Long> dbIndexes = new LinkedList<>();
@@ -39,10 +42,11 @@ public class Sharer {
 
     private StringBuilder readBuilder = new StringBuilder();
 
-    public Sharer(int port, DbIndexService dbIndexService, ChannelService channelService, MasterEndpoint[] masterEndpoints) {
+    public Sharer(int port, DbIndexService dbIndexService, ChannelService channelService, UserService userService, MasterEndpoint[] masterEndpoints) {
         this.port = port;
         this.dbIndexService = dbIndexService;
         this.channelService = channelService;
+        this.userService = userService;
         this.masterEndpoints = masterEndpoints;
     }
 
@@ -127,11 +131,8 @@ public class Sharer {
     private void parseMessage(String msg, SocketChannel channel) throws IOException {
         TransmittedData data = TransmittedData.fromJson(msg);
         if (data instanceof NodeInit) handleInit((NodeInit) data, channel);
-        else if (data instanceof MasterMessage) handleMasterMessage((MasterMessage) data);
-    }
-
-    private void handleMasterMessage(MasterMessage msg) {
-        msg.masterHandle(channelService);
+        else if (data instanceof MasterMessage) ((MasterMessage) data).masterHandle(channelService);
+        else if (data instanceof UserMessage) ((UserMessage) data).handleUser(userService);
     }
 
     private void handleInit(NodeInit nodeInit, SocketChannel channel) throws IOException {
@@ -157,7 +158,7 @@ public class Sharer {
         }
     }
 
-    public static void sendToMasters(MasterMessage msg) throws IOException {
+    public static void sendToMasters(Message msg) throws IOException {
         String json = TransmittedData.toJson(msg) + MESSAGES_SEPARATOR;
         ByteBuffer buffer = ByteBuffer.wrap(json.getBytes());
 
