@@ -13,6 +13,6 @@ public class MasterChannelAddMemberMessage extends MasterMessage {
 
     @Override
     public void masterHandle(ChannelService channelService) {
-        channelService.expelMember(channelId, userId);
+        channelService.addMember(channelId, userId);
     }
 }

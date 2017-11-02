@@ -52,6 +52,7 @@ public class ChannelService {
         try(SqlSession session = dbService.openSession()) {
             if(channel.getId() != 0) {
                 session.insert("channel_create_with_id", channel);
+                session.commit();
                 addMember(channel.getId(), creatorId);
                 session.commit();
 
