@@ -16,6 +16,7 @@ import otus.project.horizontal_scaling_chat.share.message.Message;
 import otus.project.horizontal_scaling_chat.share.message.user.UserMessage;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
@@ -60,10 +61,9 @@ public class Sharer {
             Selector selector = Selector.open();
             serverSocketChannel.register(selector, SelectionKey.OP_ACCEPT, null);
 
-            for (MasterEndpoint masterEndpoint : masterEndpoints)
-                bindMaster(selector, masterEndpoint.getHost(), masterEndpoint.getPort());
+            connectToMasters(selector);
 
-            logger.info("Started on port: " + port);
+            logger.info("Started sharer on port: " + port);
 
             while (true) {
                 selector.select();
@@ -82,6 +82,30 @@ public class Sharer {
                 }
             }
         }
+    }
+
+    private void connectToMasters(Selector selector) throws IOException, InterruptedException {
+        while (true) {
+            int length = masterEndpoints.length;
+            Queue<MasterEndpoint> queue = new LinkedList<>(Arrays.asList(masterEndpoints));
+
+            while (!queue.isEmpty()) {
+                MasterEndpoint endpoint = queue.poll();
+
+                try {
+                    bindMaster(selector, endpoint.getHost(), endpoint.getPort());
+
+                    logger.info("Connected to " + endpoint.getHost() + ":" + endpoint.getPort());
+                    length--;
+                } catch (ConnectException e) {
+                    queue.add(endpoint);
+                }
+            }
+
+            if (length == 0) break;
+            Thread.sleep(100);
+        }
+        logger.info("Connected to all masters");
     }
 
     private void bindMaster(Selector selector, String masterHost, int masterPort) throws IOException {

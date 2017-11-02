@@ -29,7 +29,7 @@ public class ShareListener implements ServletContextListener {
                         BeanHelper.getBean(UserService.class),
                         MasterEndpoint.get("masters.json")
                 ).run();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });

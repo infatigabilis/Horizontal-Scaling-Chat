@@ -1,6 +1,8 @@
 package otus.project.horizontal_scaling_chat.db_node.share;
 
 import com.sun.org.apache.regexp.internal.RE;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import otus.project.horizontal_scaling_chat.db_node.db.service.ChannelService;
 import otus.project.horizontal_scaling_chat.db_node.db.service.UserService;
 import otus.project.horizontal_scaling_chat.share.MasterEndpoint;
@@ -12,15 +14,16 @@ import otus.project.horizontal_scaling_chat.share.message.user.UserMessage;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
-import java.util.Iterator;
-import java.util.Properties;
+import java.util.*;
 
 public class Receiver {
+    private static final Logger logger = LogManager.getLogger();
     private static final int CAPACITY = 516;
     private static final String MESSAGES_SEPARATOR = "\n\n";
 
@@ -37,19 +40,10 @@ public class Receiver {
     }
 
     @SuppressWarnings("InfiniteLoopStatement")
-    public void run() throws IOException {
+    public void run() throws IOException, InterruptedException {
         Selector selector = Selector.open();
-        String info = getSelfInfo();
 
-        for (MasterEndpoint endpoint : masterEndpoints) {
-            SocketChannel channel = SocketChannel.open();
-            channel.connect(new InetSocketAddress(endpoint.getHost(), endpoint.getPort()));
-
-            channel.write(ByteBuffer.wrap(info.getBytes()));
-
-            channel.configureBlocking(false);
-            channel.register(selector, SelectionKey.OP_READ);
-        }
+        connectToMasters(selector);
 
         while (true) {
             selector.select();
@@ -66,6 +60,38 @@ public class Receiver {
                 }
             }
         }
+    }
+
+    private void connectToMasters(Selector selector) throws IOException, InterruptedException {
+        while (true) {
+            String info = getSelfInfo();
+
+            int length = masterEndpoints.length;
+            Queue<MasterEndpoint> queue = new LinkedList<>(Arrays.asList(masterEndpoints));
+
+            while (!queue.isEmpty()) {
+                MasterEndpoint endpoint = queue.poll();
+
+                try {
+                    SocketChannel channel = SocketChannel.open();
+                    channel.connect(new InetSocketAddress(endpoint.getHost(), endpoint.getPort()));
+
+                    channel.write(ByteBuffer.wrap(info.getBytes()));
+
+                    channel.configureBlocking(false);
+                    channel.register(selector, SelectionKey.OP_READ);
+
+                    logger.info("Connected to " + endpoint.getHost() + ":" + endpoint.getPort());
+                    length--;
+                } catch (ConnectException e) {
+                    queue.add(endpoint);
+                }
+            }
+
+            if (length == 0) break;
+            Thread.sleep(100);
+        }
+        logger.info("Connected to all masters");
     }
 
     private void read(SocketChannel channel) throws IOException {
