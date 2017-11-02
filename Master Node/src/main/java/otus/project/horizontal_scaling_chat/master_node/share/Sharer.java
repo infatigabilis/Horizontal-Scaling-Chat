@@ -7,12 +7,14 @@ import otus.project.horizontal_scaling_chat.master_node.db.service.ChannelServic
 import otus.project.horizontal_scaling_chat.master_node.db.service.DbIndexService;
 import otus.project.horizontal_scaling_chat.master_node.db.service.UserService;
 import otus.project.horizontal_scaling_chat.master_node.share.message.MasterMessage;
+import otus.project.horizontal_scaling_chat.master_node.share.message.MasterUserCreateMessage;
 import otus.project.horizontal_scaling_chat.share.MasterEndpoint;
 import otus.project.horizontal_scaling_chat.share.TransmittedData;
 import otus.project.horizontal_scaling_chat.share.init.DbNodeInit;
 import otus.project.horizontal_scaling_chat.share.init.MasterNodeInit;
 import otus.project.horizontal_scaling_chat.share.init.NodeInit;
 import otus.project.horizontal_scaling_chat.share.message.Message;
+import otus.project.horizontal_scaling_chat.share.message.channel.AddMemberMessage;
 import otus.project.horizontal_scaling_chat.share.message.user.UserMessage;
 
 import java.io.IOException;
@@ -157,6 +159,7 @@ public class Sharer {
         if (data instanceof NodeInit) handleInit((NodeInit) data, channel);
         else if (data instanceof MasterMessage) ((MasterMessage) data).masterHandle(channelService);
         else if (data instanceof UserMessage) ((UserMessage) data).handleUser(userService);
+        else if (data instanceof MasterUserCreateMessage) ((MasterUserCreateMessage) data).handleUser(userService);
     }
 
     private void handleInit(NodeInit nodeInit, SocketChannel channel) throws IOException {

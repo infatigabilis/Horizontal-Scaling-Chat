@@ -7,6 +7,8 @@ import otus.project.horizontal_scaling_chat.master_node.db.dataset.User;
 import otus.project.horizontal_scaling_chat.master_node.db.service.UserService;
 import otus.project.horizontal_scaling_chat.master_node.listener.ShareListener;
 import otus.project.horizontal_scaling_chat.master_node.share.Sharer;
+import otus.project.horizontal_scaling_chat.master_node.share.message.MasterUserCreateMessage;
+import otus.project.horizontal_scaling_chat.share.message.channel.AddMemberMessage;
 import otus.project.horizontal_scaling_chat.share.message.user.RefreshUserTokenMessage;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -48,6 +50,7 @@ public class AuthServlet extends HttpServlet {
                 Sharer.send(i.getDbIndex(), new RefreshUserTokenMessage(cur));
         }
         else {
+            Sharer.sendToMasters(new MasterUserCreateMessage(user));
             userService.add(user);
         }
 
